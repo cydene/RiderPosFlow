@@ -1,0 +1,12 @@
+{
+  "name": "CydeneRider",
+  "displayName": "CydeneRider Rider",
+  "expo": {
+    "name": "CydeneRider",
+    "slug": "CydeneRider",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

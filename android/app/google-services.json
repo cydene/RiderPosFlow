@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "950311176871",
+    "project_id": "cydene-express-c355b",
+    "storage_bucket": "cydene-express-c355b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950311176871:android:00f69d0424fcdb3b46a982",
+        "android_client_info": {
+          "package_name": "com.cydeneexpress"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "950311176871-hfamrk21cb0oo5bckousnlm6kfec1uro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cydeneexpress",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "950311176871-ljud43unjfhu1fkco1152b3hqjdjn61f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cydeneexpress",
+            "certificate_hash": "6e621a51dcd6d2f2b4ecb5194a729e1b551d2cd0"
+          }
+        },
+        {
+          "client_id": "950311176871-phcs4ijqe058v0a314nkreu0kaul0sks.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cydeneexpress",
+            "certificate_hash": "eceb505aadbe452517f260fde05976a77951c96c"
+          }
+        },
+        {
+          "client_id": "950311176871-plr215dj3t5bqfdhja29ua96di5f1882.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ5EtAsi1BHSe_w0rHcHxiwOUShKt8-ao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "950311176871-plr215dj3t5bqfdhja29ua96di5f1882.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "950311176871-966bt0dm8ji8mu3o1tddgnmhjjclrj2c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cydeneexpress"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950311176871:android:ea10ba47d607948b46a982",
+        "android_client_info": {
+          "package_name": "com.cydenerider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "950311176871-plr215dj3t5bqfdhja29ua96di5f1882.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ5EtAsi1BHSe_w0rHcHxiwOUShKt8-ao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "950311176871-plr215dj3t5bqfdhja29ua96di5f1882.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "950311176871-966bt0dm8ji8mu3o1tddgnmhjjclrj2c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cydeneexpress"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
