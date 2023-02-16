@@ -129,6 +129,7 @@ const CreateProduct = (props: Props) => {
     const [productName, setProductName] = useState('')
     const [productDetails, setProductDetails] = useState('')
 
+
     var productInput = useRef(null)
 
     let phoneInput = useRef()
@@ -165,16 +166,16 @@ const CreateProduct = (props: Props) => {
 
 		allProducts  && allProducts.map((product) => {
             console.log(product)
-            const { Key } = product
+            const { key } = product
             let newObject = {
-                value: Key,
-                label: Key
+                value: key,
+                label: key
             }
             products.push(newObject)
         })
 
-        console.log(products)
-        setProductList(products)
+        console.log('products',products)
+        setProductList(products);
 	}, [])
 
 	const showAlert = (title: string, body: string | undefined) => {
@@ -233,6 +234,7 @@ const CreateProduct = (props: Props) => {
                                     marginTop: 20
                                 }}
                             >
+                                
                                 <RNPickerSelect
                                     items={productList}
                                     onValueChange={value => {
