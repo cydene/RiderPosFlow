@@ -6,7 +6,6 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "npx jetify && cd ios && pod install",
     "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle  --assets-dest android/app/src/main/res/",
     "release-apk": "npm run bundle && cd android && ./gradlew assembleRelease",
     "release-bundle": "npm run bundle && cd android && ./gradlew bundleRelease"
