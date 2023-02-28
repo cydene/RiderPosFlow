@@ -139,7 +139,7 @@ android {
         versionName "80.0.7"
             // missingDimensionStrategy 'store', 'play'
         multiDexEnabled true
-        ndkVersion '24.0.8215888'
+        ndkVersion '21.1.6528147'
         
     }
     splits {
