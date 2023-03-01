@@ -8,6 +8,7 @@ import {
 } from "react-native";
 
 // third-party
+import firebase, {RNFirebase} from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage'
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
@@ -302,9 +303,9 @@ const Dashboard = (props: Props) => {
         GetValidateToday()
         setShowModal(false)
         setValidation(false)
-        console.warn('>>>>>getetete',userDetails)
-        // getAllMyProduct()
-
+        console.warn('>>>>>getetete>>>>>>>>',userDetails)
+    
+        getUserNotiificationId()
 
         getUserDetail()
         updateBackground()
@@ -313,6 +314,13 @@ const Dashboard = (props: Props) => {
         GetPeople()
         getAllProductsAsync()
         getMyProductsAsync()
+       
+    }, [])
+
+      
+	useEffect(() => {
+    UpdateBalance()
+    getUserNotiificationId()
        
     }, [])
 
@@ -488,18 +496,151 @@ if(res.data.length > 0){
           setLoading(false) 
         }
       } catch (err) {
+     
         setLoading(false)
         setShowModal(false)
         console.warn('call err>>>>>>>>>>>>>', err);
 if(err.response){
+  
   console.warn('call err>>>>>>>>>>>>>222', err.response);
-  Toast.show(`${err.response.data.message}`, Toast.LONG);j  
+  Toast.showWithGravity(`${err.response.data.message}`, Toast.TOP, Toast.LONG,{ backgroundColor: 'green' });
 }
 
         
       }
 
  }
+
+ const getUserNotiificationId=async()=>{
+  
+  try {
+      setLoading(true) 
+
+   
+
+      const info= await AsyncStorage.getItem('user');
+      console.warn('userDetails',info)
+      const userInfo=JSON.parse(info)
+      const notifyId= await AsyncStorage.getItem('fcmToken');
+    
+      console.warn('userDetails >>>>333token',userDetails.token)
+      let res = await axios({
+        method: 'GET',
+        url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/profile`,
+       
+        headers: {
+          Authorization:`Bearer ${userDetails.token}`,
+        },
+
+      });
+      if (res) {
+        console.warn('success>>>',res.data.notificationId)
+
+        console.warn('\\ success>>>',res.data)
+
+        if(notifyId != res.data.notificationId){
+          permission()
+        }
+
+        if(res.data.notificationId==null){
+          permission()
+        }
+
+
+        setLoading(false) 
+      }
+    } catch (err) {
+      setLoading(false)
+      setShowModal(false)
+      console.warn('call err>>>>>>>>>>>>>', err);
+if(err.response){
+console.warn('call err>>>>>>>>>>>>>222', err.response);
+Toast.show(`${err.response.data.message}`, Toast.LONG);
+}
+
+      
+    }
+
+}
+
+const requestPermission = async () => {
+  try {
+    await firebase.messaging().requestPermission();
+    // User has authorised
+    await getToken();
+  } catch (error) {
+    // User has rejected permissions
+    console.warn('permission rejected', error);
+  }
+};
+
+
+
+
+const permission = async () => {
+  const enabled = await firebase.messaging().hasPermission();
+  if (enabled) {
+    await getToken();
+  } else {
+    requestPermission();
+  }
+};
+
+const getToken = async () => {
+  try {
+    const fcmToken = await firebase.messaging().getToken();
+    if (fcmToken) {
+      // user has a device token
+      console.warn('fcmToken:...>>>', fcmToken);
+
+      const infoSave= await AsyncStorage.setItem('fcmToken',fcmToken);
+      console.warn('infoSave>>', infoSave);
+    }
+    updateNotiId(fcmToken);
+    // console.warn('fcmToken:', fcmToken);
+  } catch (e) {
+    console.warn('error', e);
+  }
+};
+
+
+const updateNotiId = async value => {
+  try {
+    const info= await AsyncStorage.getItem('user');
+        console.warn('userDetails >>>>complete',info)
+        const userInfo=JSON.parse(info)
+        console.warn('userDetails >>>>complete',userInfo)
+    const payLoad = {
+      notificationId: value,
+    };
+    console.warn('payLoad-payLoad-payLoad',userInfo.id)
+
+    let res = await axios({
+      method: 'PUT',
+      url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/${userInfo.id}`,
+      data:payLoad,
+      headers: {
+        Authorization:`Bearer ${userDetails.token}`,
+      },
+
+    });
+    if (res) {
+      setLoading(false);
+      if (res.er) {
+        console.warn('error get userdb details33?>>>', res.er);
+        console.warn('error get userdb details?>>>', res.er.response);
+     
+        setLoading(false);
+      } else {
+        console.warn('success>>>>> get contact>>>>>>>>', res.data);
+        setLoading(false);
+      }
+    }
+  } catch (e) {
+    console.warn('erorr get contact ', e);
+  }
+};
+
 
  const complete=async()=>{
   console.warn('pppp>>complete')
@@ -634,7 +775,7 @@ console.warn(`https://cydene-admin-prod.herokuapp.com/api/agent/stats?date=${reF
             },
           });
           if (res) {
-            console.warn('success >>setDailyValidation>>>',res.data)
+            console.warn('success >> details',res.data)
            
             console.warn('success >>setDailyValidation>>>',res.data.totalAmount)
             setDailyValidation(res.data.totalAmount)
@@ -964,8 +1105,10 @@ if(!isOnline==true){
                     onRefresh={() => {
                       // UpdateBalance()
                         // fetchMyOrdersAsync('New')
+                        console.warn('>>>>>getetete>>>>>>>>',userDetails)
                         fetchWalletBalanceAsync()
                         GetValidateToday()
+                        getUserNotiificationId()
                         getAllProductsAsync()
                        
                         getMyProductsAsync()
@@ -1023,6 +1166,26 @@ if(!isOnline==true){
                                 style={ACCOUNT_BALANCE3}
                             >
                               Validated Today :
+                            </Text>
+
+                            <Text
+                                style={WALLET_BALANCE}
+                            >
+
+                                {translate('landing.amount', {
+                                    amount: dailyValidation ? dailyValidation.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '0.00'
+                                })}
+                  
+                            </Text>
+                        </View>
+
+                        <View
+                            style={WALLET_VIEW2}
+                        >
+                            <Text
+                                style={ACCOUNT_BALANCE3}
+                            >
+                            Amount not yet Validated :
                             </Text>
 
                             <Text

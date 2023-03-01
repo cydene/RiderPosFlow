@@ -205,7 +205,8 @@ const Transactions = (props: Props) => {
                             }}
                         >
                             {/* {transactionMethod} */}
-                            {transactionMethod=='AgentPayment'? 'Payment via P2P':transactionMethod=='CreditWallet'?'Payment via transfer':transactionMethod}
+                            {transactionMethod=='AgentPayment'? 'Payment via App':transactionMethod=='CreditWallet'?'Payment via transfer':transactionMethod=='WithdrawFromWallet'?'Withdraw From Wallet':transactionMethod}
+                        
                         </Text>
 
                         <TouchableOpacity
