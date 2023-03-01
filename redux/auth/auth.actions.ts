@@ -644,6 +644,7 @@ export const signInUserSuccess = () => ({
 })
 
 const SaveUser = async (data) => {
+	console.warn('the data comiing>>>>>', data)
 	try {
 		await AsyncStorage.setItem('user', JSON.stringify(data));
 		console.warn('saved user>>>', data)

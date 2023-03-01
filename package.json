@@ -6,7 +6,9 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "npx jetify && cd ios && pod install"
+    "postinstall": "npx jetify && cd ios && pod install",
+    "androidPush": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Production -t=*",
+    "androidPush2": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Staging -t=*"
   },
   "dependencies": {
     "@react-native-community/async-storage": "~1.12.1",
@@ -31,9 +33,9 @@
     "react-native-dark-mode": "~0.2.2",
     "react-native-dotenv": "~2.5.3",
     "react-native-firebase": "~5.6.0",
-    "react-native-image-crop-picker": "~0.37.2",
     "react-native-geolocation-service": "~5.2.0",
     "react-native-gesture-handler": "~1.8.0",
+    "react-native-image-crop-picker": "~0.37.2",
     "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-maps": "~0.27.1",
     "react-native-maps-directions": "~1.8.0",

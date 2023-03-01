@@ -162,18 +162,19 @@ const CreateProduct = (props: Props) => {
 
     useEffect(() => {
         let products: any = []
-
+console.warn('thee item')
 		allProducts  && allProducts.map((product) => {
+            console.warn('thee item',product)
             console.log(product)
-            const { Key } = product
+            // const { Key } = product
             let newObject = {
-                value: Key,
-                label: Key
+                value:product.key,
+                label: product.key
             }
             products.push(newObject)
         })
 
-        console.log(products)
+        console.warn('now',products)
         setProductList(products)
 	}, [])
 
