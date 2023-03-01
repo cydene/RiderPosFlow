@@ -2,10 +2,13 @@
 import React, { useEffect, useState, useRef } from "react"
 
 // react-native
+// import {
+// 	View, ViewStyle, StatusBar, Text, Platform, Keyboard, FlatList, ActivityIndicator, ScrollView, RefreshControl
+// } from "react-native";
 import {
-	View, ViewStyle, StatusBar, Text, Platform, Keyboard, FlatList, ActivityIndicator, ScrollView, RefreshControl
+	View, ViewStyle, StatusBar, Platform, ScrollView, ImageStyle, ImageBackground, Text, TouchableOpacity, Image,
+    ActivityIndicator, TextStyle, FlatList, RefreshControl,Linking, TextInput,KeyboardAvoidingView
 } from "react-native";
-
 // third-party
 import AsyncStorage from '@react-native-community/async-storage'
 import { NavigationScreenProps } from "react-navigation";
@@ -30,7 +33,7 @@ import { Layout } from "../../constants";
 import { colors, fonts, images } from "../../theme";
 import { Header } from "../../components/header";
 import { translate } from "../../i18n";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 import { Icon } from "../../components/icon";
 import { formatAmount } from "../../utils/formatters";
 import moment from "moment";
@@ -65,9 +68,10 @@ const Transactions = (props: Props) => {
          navigation, notify, FetchWalletTransactionsAsync
     } = props
     const isDarkMode = useDarkMode()
-
+    const [detailsToggle, setDetailsToggle] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [transactions, setTransactions] = useState([])
+    const [selectedDetails, setSelectedDetails] = useState('')
     useEffect(() => {
         updateBackground()
         getTransaction()
@@ -132,6 +136,12 @@ const Transactions = (props: Props) => {
       
     }
 
+    const detailsManipulation=(value)=>{
+        setSelectedDetails(value)
+        console.warn('details>>>manipulation>>',value)
+        setDetailsToggle(true)
+    }
+
     const updateBackground = () => {
 		StatusBar.setBarStyle(isDarkMode ? 'light-content' : 'dark-content');
         navigation.setParams({
@@ -154,6 +164,7 @@ const Transactions = (props: Props) => {
 
 
         return (
+            <TouchableOpacity onPress={()=> detailsManipulation(item)}>
             <View
                 key={index}
                 style={{
@@ -193,7 +204,9 @@ const Transactions = (props: Props) => {
                                 width: '50%'
                             }}
                         >
-                            {transactionMethod}
+                            {/* {transactionMethod} */}
+                            {transactionMethod=='AgentPayment'? 'Payment via App':transactionMethod=='CreditWallet'?'Payment via transfer':transactionMethod=='WithdrawFromWallet'?'Withdraw From Wallet':transactionMethod}
+                        
                         </Text>
 
                         <TouchableOpacity
@@ -220,6 +233,7 @@ const Transactions = (props: Props) => {
                     </View>
                 
             </View>
+            </TouchableOpacity>
         )
     }
 
@@ -318,6 +332,245 @@ const Transactions = (props: Props) => {
                         </View>
                     )
                 }
+
+
+
+<Modal
+          isVisible={detailsToggle}
+          onBackButtonPress={() =>setDetailsToggle(false)}
+          onBackdropPress={() =>setDetailsToggle(false)}
+          onSwipeComplete={() =>setDetailsToggle(false)}
+          style={{
+            height: '100%',
+            width: '100%',
+            marginLeft: '-0%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+
+
+            {/* start */}
+           <View
+            style={{
+              backgroundColor: 'white',
+              width: '90%',
+     height: '90%',
+
+
+
+            }}> 
+<View style={{width:'100%'}}>
+<Header
+                leftIcon="arrowBackWhite"
+                navigation={navigation}
+                onLeftPress={() => setDetailsToggle(false)}
+                style={{
+                    backgroundColor: 'transparent'
+                }}
+                titleStyle={{
+                    color: isDarkMode ? colors.white : colors.companyDarkGreen
+                }}
+                titleTx={'transactions.headerText2'}
+                leftIconStyle={{
+                    tintColor: isDarkMode ? colors.white : colors.companyDarkGreen,
+                    marginTop: 15,
+                    marginLeft: 3
+                }}
+            />
+
+</View>
+
+<ScrollView>
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+
+      <View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+      <Text style={{fontSize:15}}> Account Name : </Text>
+
+
+       </View>
+
+       <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+       <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transferAccountName?selectedDetails.transferAccountName:'':''} </Text>
+
+       </View>
+
+</View>
+           
+
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Account Email : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transferAccountNumber?selectedDetails.transferAccountNumber:'':''}</Text>
+
+ </View>
+
+</View>
+
+{/* box */}
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Account Phone number : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transferAccountNumber?selectedDetails.transferAccountNumber:'':''}</Text>
+
+ </View>
+
+</View>
+ {/* box closed */}
+
+
+{/* box */}
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Amount : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+  <Text style={{fontSize:15,textAlign:'right'}}>₦ {selectedDetails?selectedDetails.amount?selectedDetails.amount:'':''}</Text>
+
+ </View>
+
+</View>
+ {/* box closed */}
+
+{/* box */}
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'40%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Reference : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'60%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transactionRef?selectedDetails.transactionRef:'':''}</Text>
+
+ </View>
+
+</View>
+ {/* box closed */}
+ 
+ 
+ {/* box closed */}
+
+{/* box */}
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Session Id : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.id?selectedDetails.id:'':''}</Text>
+
+ </View>
+
+</View>
+ {/* box closed */}
+
+
+{/* box */}
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Time : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transactionDate ? `${moment(selectedDetails.transactionDate).format('hh:mm:ss')}`:'':''}</Text>
+
+ </View>
+
+</View>
+ {/* box closed */}
+
+{/* box */}
+<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Date : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transactionDate ? `${moment(selectedDetails.transactionDate).format('MMMM Do YYYY')}`:'':''}</Text>
+
+ </View>
+ 
+</View>
+ {/* box closed */}
+ </ScrollView>
+
+
+
+
+
+
+          </View>
+
+
+          {/* finish */}
+        </Modal>
 
         </ScrollView>
 	)

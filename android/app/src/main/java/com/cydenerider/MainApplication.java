@@ -22,6 +22,7 @@ import org.unimodules.core.interfaces.Package;
 import org.unimodules.core.interfaces.SingletonModule;
 import expo.modules.constants.ConstantsPackage;
 import expo.modules.permissions.PermissionsPackage;
+import com.microsoft.codepush.react.CodePush;
 import expo.modules.filesystem.FileSystemPackage;
 import expo.modules.updates.UpdatesController;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
@@ -37,7 +38,11 @@ public class MainApplication extends Application implements ReactApplication {
     new BasePackageList().getPackageList()
   );
 
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+  private final ReactNativeHost mReactNativeHost =
+   new ReactNativeHost(this) {
+
+
+
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
@@ -57,6 +62,11 @@ public class MainApplication extends Application implements ReactApplication {
       return "index";
     }
 
+    // @Override
+    // protected String getJSBundleFile() {
+    //     return CodePush.getJSBundleFile();
+    // }
+
     @Override
     protected @Nullable String getJSBundleFile() {
       if (BuildConfig.DEBUG) {
@@ -64,6 +74,8 @@ public class MainApplication extends Application implements ReactApplication {
       } else {
         return UpdatesController.getInstance().getLaunchAssetFile();
       }
+
+//      return CodePush.getJSBundleFile();
     }
 
     @Override
