@@ -494,6 +494,7 @@ if(res.data.length > 0){
         setToggle(true)
         setDetails(res.data)
           setLoading(false) 
+          setLoading(false) 
         }
       } catch (err) {
      
