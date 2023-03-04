@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 // third-party
-import firebase, {RNFirebase} from 'react-native-firebase';
+import firebase, {RNFirebase, analytics} from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage'
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
@@ -1388,7 +1388,13 @@ if(!isOnline==true){
 </View>
 <View style={{height:60,width:'45%',justifyContent:'center',alignItems:'center',borderRadius:10,marginLeft:5 }}>
 
-<TouchableOpacity style={{height:35,width:'100%',backgroundColor:colors.companyDarkGreen,justifyContent:'center',alignItems:'center',borderRadius:5}}   onPress={() => setShowModal(true)}>
+<TouchableOpacity style={{height:35,width:'100%',backgroundColor:colors.companyDarkGreen,justifyContent:'center',alignItems:'center',borderRadius:5}}   onPress={async () => {
+  // setShowModal(true)
+  const log = await firebase.analytics().logEvent('h')
+  const per = await firebase.messaging().requestPermission();
+  console.log("----log:", log, per);
+  
+  }}>
 <Text style={{color:'white'}}>Validate Payment</Text>
 </TouchableOpacity>
 </View>
