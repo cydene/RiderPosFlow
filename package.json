@@ -6,7 +6,7 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "npx jetify && cd ios && pod install",
+    "postinstall": "npx jetify",
     "androidPush": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Production -t=*",
     "androidPush2": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Staging -t=*"
   },
