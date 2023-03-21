@@ -248,6 +248,7 @@
   "transactions": {
     "headerText": "Transactions",
     "headerText2": "Transaction Details",
+    "headerTextAccount": "Account Details",
     "amount": "₦ {{amount}}",
     "empty": "You have no wallet transactions",
     "deliveryFee": "Delivery Fee:",

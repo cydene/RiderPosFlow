@@ -31,6 +31,8 @@ import { updateUserLocationAsync, authCredentials, fetchMyOrdersAsync, fetchWall
      getAllProductsAsync, getMyProductsAsync,editAProductAsync } from "../../redux/auth";
 
 // components
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Button } from "../../components/button";
 import { Header } from "../../components/header";
 import { Map } from "../../components/map"
@@ -153,14 +155,14 @@ const ACCOUNT_BALANCE2 = {
 	color: colors.white,
 	fontFamily: fonts.robotoLight,
 	marginTop: 10,
-	fontSize: 20,
+	fontSize: 15,
 }
 
 const ACCOUNT_BALANCE3 = {
 	color: colors.white,
 	fontFamily: fonts.robotoLight,
 	marginTop: 10,
-	fontSize: 20,
+	fontSize: 15,
 }
 
 const WALLET_BALANCE = {
@@ -168,7 +170,7 @@ const WALLET_BALANCE = {
 	fontFamily: fonts.robotoBold,
 	marginTop: 10,
 	marginLeft: Layout.window.width / 25,
-	fontSize: 20,
+	fontSize: 15,
 }
 
 const QUICK_LINKS_VIEW: ViewStyle = {
@@ -285,10 +287,14 @@ const Dashboard = (props: Props) => {
     const [activeToggle, setActiveToggle] = useState('gas')
     const [id, setId] = useState('')
     const [showModal, setShowModal] = useState(false);
+    const [errorModal, setErrorModal] = useState(false);
+    const [error, setError] = useState('');
+    const [sucModal, setSucModal] = useState(false);
     const [validation, setValidation] = useState(false);
     const [gasValue, setGasValue] = useState(false)
     const [realTimeBalance, setRealTimeBalance] = useState('')
     const [dailyValidation, setDailyValidation] = useState('')
+    const [amountNotValidated, setAmountNotValidated] = useState('')
     const [details, setDetails] = useState('')
     const [toggle, setToggle] = useState(false)
     const [code, setCode] = useState('')
@@ -344,10 +350,12 @@ const Dashboard = (props: Props) => {
       setToggle(false)
       setShowModal(false)
       setValidation(false)
+    
+      setErrorModal(false)
       
     }
 
-
+    
     const  getAllMyProduct =async()=>{
       console.warn('i am hitting this function getAllMyProduct')
         setLoading(true)
@@ -453,6 +461,7 @@ if(res.data.length > 0){
             console.warn('call err>>>>>>>>>>>>>', err.response);
             Toast.show(`${err.response.data.message}`, Toast.LONG);
             
+            
           }
       
     }
@@ -500,11 +509,13 @@ if(res.data.length > 0){
      
         setLoading(false)
         setShowModal(false)
-        console.warn('call err>>>>>>>>>>>>>', err);
+        console.warn('call err> validate func', err);
 if(err.response){
   
   console.warn('call err>>>>>>>>>>>>>222', err.response);
-  Toast.showWithGravity(`${err.response.data.message}`, Toast.TOP, Toast.LONG,{ backgroundColor: 'green' });
+  // Toast.show(`${err.response.data.message}`, Toast.LONG);
+  setError(err.response.data.message)
+  setErrorModal(true)
 }
 
         
@@ -668,11 +679,12 @@ const updateNotiId = async value => {
         });
         if (res) {
           console.warn('success>>>>> complete validation>>>>>>>>',res.data)
+          setSucModal(true)
           setShowModal(false)
           setValidation(false)
           setDetails('')
-          clear();
-          Toast.show(`Successful`, Toast.LONG);
+          // clear();
+          // Toast.show(`Successful`, Toast.LONG);
           setLoading(false) 
         }
       } catch (err) {
@@ -688,6 +700,9 @@ const updateNotiId = async value => {
           if( err.response.data){
             if( err.response.data.message){
               Toast.show(`${err.response.data.message}`, Toast.LONG);
+
+              setError(response.data.message)
+              setErrorModal(true)
             }
           }
 
@@ -778,9 +793,9 @@ console.warn(`https://cydene-admin-prod.herokuapp.com/api/agent/stats?date=${reF
           if (res) {
             console.warn('success >> details',res.data)
            
-            console.warn('success >>setDailyValidation>>>',res.data.totalAmount)
+            console.warn('success >>setDailyValidation>>>',res.data.totalAmountNotValidated)
             setDailyValidation(res.data.totalAmount)
-        
+            setAmountNotValidated(res.data.totalAmountNotValidated)
             setLoading(false)
           
             console.warn(dailyValidation)
@@ -1107,12 +1122,12 @@ if(!isOnline==true){
                       // UpdateBalance()
                         // fetchMyOrdersAsync('New')
                         console.warn('>>>>>getetete>>>>>>>>',userDetails)
-                        fetchWalletBalanceAsync()
+                        // fetchWalletBalanceAsync()
                         GetValidateToday()
-                        getUserNotiificationId()
-                        getAllProductsAsync()
+                        // getUserNotiificationId()
+                        // getAllProductsAsync()
                        
-                        getMyProductsAsync()
+                        // getMyProductsAsync()
                     }}
                 />
             }
@@ -1186,7 +1201,7 @@ if(!isOnline==true){
                             <Text
                                 style={ACCOUNT_BALANCE3}
                             >
-                            Amount not yet Validated :
+                            Pending Validation :
                             </Text>
 
                             <Text
@@ -1194,7 +1209,7 @@ if(!isOnline==true){
                             >
 
                                 {translate('landing.amount', {
-                                    amount: dailyValidation ? dailyValidation.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '0.00'
+                                    amount: amountNotValidated ?amountNotValidated.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '0.00'
                                 })}
                   
                             </Text>
@@ -1880,6 +1895,9 @@ backgroundColor:colors.companyDarkGreen,marginTop:30,borderRadius:10}} onPress={
           </View>
         </View>
 
+
+        
+
         <Modal
           isVisible={validation}
           onBackButtonPress={() =>clear()}
@@ -2016,6 +2034,133 @@ backgroundColor:colors.companyDarkGreen,marginTop:30,borderRadius:10}} onPress={
       </Modal>
 
       <Spinner visible={loading} color={'#0054C1'} />
+
+      <Modal
+          isVisible={errorModal}
+          onBackButtonPress={() =>clear()}
+          onBackdropPress={() => clear()}
+          onSwipeComplete={() => clear()}
+          style={{
+            height: '100%',
+            width: '100%',
+            marginLeft: '-0%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+            
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              height: '40%',
+              width: '70%',
+              paddingVertical: 35,
+              alignSelf: 'center',
+              paddingTop: 20,
+              alignItems:'center'
+            }}>
+           <View style={{height:'30%',width:'80%',marginTop:5,justifyContent:'center',alignItems:'center' }}>
+           <MaterialIcons name="error" size={50} color={'red'} />
+           </View>
+
+           <View style={{marginTop:10}}>
+            <Text style={{color:'gray',fontSize:20}}>Error</Text>
+           </View>
+
+           <View style={{marginTop:20}}>
+            <Text>{error}</Text>
+           </View>
+
+           <View style={{marginTop:25,width:'90%',alignItems:'center'}}>
+            <TouchableOpacity style={{height:'44%',width:'90%',backgroundColor:colors.companyDarkGreen,justifyContent:'center',alignItems:'center',borderRadius:7}} onPress={()=>setErrorModal(false)}>
+              <Text style={{color:'white'}}>Close</Text>
+            </TouchableOpacity>
+           </View>
+         
+          </View>
+        </Modal>
+
+
+
+        <Modal
+          isVisible={sucModal}
+          onBackButtonPress={() =>clear()}
+          onBackdropPress={() => clear()}
+          onSwipeComplete={() => clear()}
+          style={{
+            height: '100%',
+            width: '100%',
+            marginLeft: '-0%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              height: '40%',
+              width: '70%',
+              paddingVertical: 35,
+              alignSelf: 'center',
+              paddingTop: 20,
+              alignItems:'center'
+            }}>
+           <View style={{height:'30%',width:'80%',marginTop:5,justifyContent:'center',alignItems:'center' }}>
+           <Ionicons name="checkmark-circle" size={50} color={'#FFB92D'} />
+           </View>
+
+           <View style={{marginTop:10}}>
+            <Text style={{color:'gray',fontSize:20}}>Success</Text>
+           </View>
+
+           <View style={{marginTop:20}}>
+            <Text>Validation Successful</Text>
+           </View>
+
+           <View style={{marginTop:25,width:'90%',alignItems:'center'}}>
+            <TouchableOpacity style={{height:'44%',width:'90%',backgroundColor:colors.companyDarkGreen,justifyContent:'center',alignItems:'center',borderRadius:7}} onPress={()=>setSucModal(false)}>
+              <Text style={{color:'white'}}>Close</Text>
+            </TouchableOpacity>
+           </View>
+         
+          </View>
+        </Modal>
+
+{/*         
+        <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              height: '50%',
+              width: '80%',
+              paddingVertical: 35,
+              alignSelf: 'center',
+              paddingTop: 20,
+              alignItems:'center'
+            }}>
+           <View style={{backgroundColor:'yellow',height:'30%',width:'80%',marginTop:25}}>
+
+           </View>
+
+           <View style={{marginTop:10}}>
+            <Text style={{color:'gray',fontSize:20}}>Success</Text>
+           </View>
+
+           <View style={{marginTop:25}}>
+            <Text>Transaction Successful</Text>
+           </View>
+
+           <View style={{marginTop:25}}>
+            <TouchableOpacity style={{height:'41%',width:290,backgroundColor:'blue',justifyContent:'center',alignItems:'center',borderRadius:7}}>
+              <Text style={{color:'white'}}>Close</Text>
+            </TouchableOpacity>
+           </View>
+         
+          </View> */}
+
+
+
+
         </ScrollView>
 	)
 }

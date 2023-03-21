@@ -92,9 +92,12 @@ const Wallet = (props: Props) => {
     const [sendMoneyModal, setSendMoneyModal] = useState(false)
     const [userNameModal, setUserNameModal] = useState(false)
     const [pin, setPin] = useState('')
-    const [address, setAddress] = useState('tststst')
+    const [address, setAddress] = useState('')
     const [reference, setReference] = useState('');
     const [userAddress, setUserAddress] = useState('')
+    const [bankDetails, setBankDetails] = useState({})
+    const [staticAccount, setStaticAccount] = useState(false)
+
     var amountInput = useRef(null)
     var narrationInput = useRef(null)
 
@@ -113,6 +116,7 @@ const Wallet = (props: Props) => {
             key: 'item1',
             action: ''
         },
+       
         {
             title: 'Change User Name', 
             key: 'item3',
@@ -125,13 +129,15 @@ const Wallet = (props: Props) => {
         }
         
     ]
-
+ const [walletFeaturesObj, setWalletFeaturesObj] = useState(walletFeatures)
     useEffect(() => {
+        manipulate()
         UpdateBalance()
-        // CheckForPin()
-        // updateBackground()
-        // getUserDetails()
-        // getUserToken()
+        CheckForPin()
+        updateBackground()
+        getUserDetails()
+        getUserToken()
+        manipulate()
     }, [])
 
     const onFulfill = async code => {
@@ -177,8 +183,8 @@ const Wallet = (props: Props) => {
               },
             });
             if (res) {
-              console.warn('retrieve user info ',res)
-             
+              console.warn('retrieve user info>>>>balance ',res.data.wallet)
+              setBankDetails(res.data)
               console.warn('retrieve user info more>>>',res.data.walletBalance)
               setRealTimeBalance(res.data.walletBalance)
           
@@ -593,14 +599,16 @@ else{
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('didFocus', () => {
+            manipulate()
             updateBackground() 
             update()
            
         });  
         update()
+        manipulate()
         updateBackground() 
         
-    }, [isDarkMode])
+    }, [isDarkMode,bankDetails])
 
 
     const update=async()=>{
@@ -620,6 +628,26 @@ else{
         Platform.OS === "android" && StatusBar.setBackgroundColor(colors.companyDarkGreen)
     }
 
+    const manipulate=()=>{
+if(bankDetails){
+        if(bankDetails.wallet){
+        if(bankDetails.wallet.accountNumber){
+
+const newAdd={
+    title: 'Terminal Account', 
+    key: 'item1',
+    action: ''
+}
+var result = [...walletFeatures, newAdd]
+console.warn('it working >>>>>',result)
+setWalletFeaturesObj(result)
+
+        }
+
+    }
+}
+    }
+
     const returnWalletIcon = (name: string) => {
         if(name === translate('wallet.loadWallet')) return images.accountDetails
         if(name === translate('wallet.accountDetails')) return images.accountDetails
@@ -627,12 +655,14 @@ else{
         if(name === 'Send Money') return images.transactions
         if(name === 'Reset Pin') return images.transactions
         if(name === 'Change User Name') return images.tabProfileIcon
+        if(name === 'Terminal Account') return images.accountDetails
     }
 
     const renderItem = ({ item }: any, index: any) => {
         const { title, key, action } = item
 
         return (
+    
             <TouchableOpacity
                 onPress={() => {
                     if (title === translate('wallet.walletTransactions')) {
@@ -647,6 +677,11 @@ else{
                     }else if(title=== 'Change User Name'){
                         console.warn('Change User Name')  
                         setUserNameModal(true)
+                    }
+
+                    else if(title=== 'Terminal Account'){
+                        console.warn('Terminal Account')  
+                        setStaticAccount(true)
                     }
 
 
@@ -1428,6 +1463,7 @@ else{
                     onRefresh={() => {
                         UpdateBalance()
                         fetchWalletBalanceAsync()
+                        manipulate()
 
                     }}
                 />
@@ -1484,6 +1520,8 @@ else{
                 </Text>
             </View>
 
+
+<ScrollView>
             <View
                 style={{
                     margin: 10
@@ -1491,10 +1529,15 @@ else{
             >
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={walletFeatures}
+                    data={walletFeaturesObj}
                     renderItem={renderItem}
                 />
             </View>
+
+            <View style={{height:40,width:30}}>
+
+            </View>
+            </ScrollView>
 
             {
                 isLoading && (
@@ -1507,7 +1550,136 @@ else{
                     />
                 )
             }
+
+
+<Modal
+          isVisible={staticAccount}
+          onBackButtonPress={() =>setStaticAccount(false)}
+          onBackdropPress={() =>setStaticAccount(false)}
+          onSwipeComplete={() =>setStaticAccount(false)}
+          style={{
+            height: '100%',
+            width: '100%',
+            marginLeft: '-0%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+
+
+            {/* start */}
+           <View
+            style={{
+              backgroundColor: 'white',
+              width: '90%',
+     height: '90%',
+
+
+
+            }}> 
+<View style={{width:'100%'}}>
+<Header
+                leftIcon="arrowBackWhite"
+                navigation={navigation}
+                onLeftPress={() => setStaticAccount(false)}
+                style={{
+                    backgroundColor: 'transparent'
+                }}
+                titleStyle={{
+                    color: isDarkMode ? colors.white : colors.companyDarkGreen
+                }}
+                titleTx={'transactions.headerTextAccount'}
+                leftIconStyle={{
+                    tintColor: isDarkMode ? colors.white : colors.companyDarkGreen,
+                    marginTop: 15,
+                    marginLeft: 3
+                }}
+            />
+
+</View>
+
+
+<View style={{width:'100%',height:'10%',flexDirection:'row',alignItems:'center'}}>
+
+
+                <View style={{height:'80%',width:'40%',justifyContent:'center',paddingLeft:15}}>
+                    <Text>Account Name
+
+                    </Text>
+
+                </View>
+
+
+                <View style={{height:'80%',width:'55%',marginLeft:5,justifyContent:'center',paddingLeft:10,alignItems:'center'}}>
+                    <Text>{bankDetails.wallet?bankDetails.wallet.accountName?bankDetails.wallet.accountName:null:null}
+
+                    </Text>
+
+                </View>
+
+
+</View>
+
+
+
+<View style={{width:'100%',height:'10%',flexDirection:'row',alignItems:'center'}}>
+
+
+                <View style={{height:'80%',width:'40%',justifyContent:'center',paddingLeft:15}}>
+                    <Text>Account number
+
+                    </Text>
+
+                </View>
+
+
+                <View style={{height:'80%',width:'55%',marginLeft:5,justifyContent:'center',paddingLeft:10,alignItems:'center'}}>
+                    <Text>{bankDetails.wallet?bankDetails.wallet.accountNumber?bankDetails.wallet.accountNumber:null:null}
+
+                    </Text>
+
+                </View>
+
+
+</View>
+
+
+<View style={{width:'100%',height:'10%',flexDirection:'row',alignItems:'center'}}>
+
+
+                <View style={{height:'80%',width:'40%',justifyContent:'center',paddingLeft:15}}>
+                    <Text>Bank name
+
+                    </Text>
+
+                </View>
+
+
+                <View style={{height:'80%',width:'55%',marginLeft:5,justifyContent:'center',paddingLeft:10,alignItems:'center'}}>
+                    <Text>{bankDetails.wallet?bankDetails.wallet.bankName?bankDetails.wallet.bankName:null:null}
+
+                    </Text>
+
+                </View>
+
+
+</View>
+
+
+
+
+
+          </View>
+
+          {/* start here */}
+            
+         
+          {/* finish */}
+        </Modal>
+
+
               <Spinner visible={loading} color={'#0054C1'} />
+
+
         </ScrollView>
 	)
 }

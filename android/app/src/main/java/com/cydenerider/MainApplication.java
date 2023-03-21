@@ -48,6 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
       return BuildConfig.DEBUG;
     }
 
+
     @Override
     protected List<ReactPackage> getPackages() {
       List<ReactPackage> packages = new PackageList(this).getPackages();
@@ -63,7 +64,7 @@ public class MainApplication extends Application implements ReactApplication {
     }
 
     // @Override
-    // protected String getJSBundleFile() {
+    // protected String getJSBundleFile() {j'
     //     return CodePush.getJSBundleFile();
     // }
 

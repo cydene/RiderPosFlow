@@ -1,10 +1,7 @@
 // react
 import React, { useEffect, useState, useRef } from "react"
 
-// react-native
-// import {
-// 	View, ViewStyle, StatusBar, Text, Platform, Keyboard, FlatList, ActivityIndicator, ScrollView, RefreshControl
-// } from "react-native";
+
 import {
 	View, ViewStyle, StatusBar, Platform, ScrollView, ImageStyle, ImageBackground, Text, TouchableOpacity, Image,
     ActivityIndicator, TextStyle, FlatList, RefreshControl,Linking, TextInput,KeyboardAvoidingView
@@ -136,6 +133,56 @@ const Transactions = (props: Props) => {
       
     }
 
+
+    const ValidateTransaction=async(comingId)=>{
+        console.warn('userDetails yessss>>>>>>>>yess',value)
+        try {
+        //   setLoading(true)
+        setIsLoading(true)
+          const value = await AsyncStorage.getItem('token');
+          if (value !== null) {
+            console.warn('userDetails yessss>>>>>>>>yess',value)
+          }else(
+            console.warn('nothing ooo')
+          )
+    
+          const userInfo = await AsyncStorage.getItem('user');
+    
+    const next=JSON.parse(value)               
+    console.warn('next>>>next>>NEXT',next)
+    const userModify=JSON.parse(userInfo)
+    console.warn('next>>>userModifyT',userModify.wallet.id)
+
+    
+ 
+            let res = await axios({
+              method: 'GET',
+              url:  `https://cydene-admin-dev.herokuapp.com/api/orders/${comingId}/complete`,
+    
+              headers: {
+                Authorization: `Bearer ${next}`,
+              
+              },
+            });
+            if (res) {
+                setIsLoading(false)
+              console.warn('retrieve user info ',res.data)
+
+
+            }
+          } catch (err) {
+            setIsLoading(false)
+            // setLoading(false)
+            // Toast.show(`${err.response.data.message}`, Toast.LONG);
+            console.warn('any error ? see this>>', err);
+        
+     
+           
+          }
+      
+    }
+
+
     const detailsManipulation=(value)=>{
         setSelectedDetails(value)
         console.warn('details>>>manipulation>>',value)
@@ -205,7 +252,7 @@ const Transactions = (props: Props) => {
                             }}
                         >
                             {/* {transactionMethod} */}
-                            {transactionMethod=='AgentPayment'? 'Payment via App':transactionMethod=='CreditWallet'?'Payment via transfer':transactionMethod=='WithdrawFromWallet'?'Withdraw From Wallet':transactionMethod}
+                            {transactionMethod=='AgentPayment'? 'Payment via App':transactionMethod=='CreditWallet' || transactionMethod=='FundWallet' ?'Payment via transfer':transactionMethod=='WithdrawFromWallet'?'Withdraw From Wallet':transactionMethod}
                         
                         </Text>
 
@@ -294,7 +341,7 @@ const Transactions = (props: Props) => {
                             paddingHorizontal: 20,
                         }}
                     >
-                        {console.warn('iiii',transactions)}
+                        {/* {console.warn('iiii',transactions)} */}
                         {
                             transactions !== undefined && transactions.length > 0 && (
                             <FlatList
@@ -381,29 +428,78 @@ const Transactions = (props: Props) => {
 </View>
 
 <ScrollView>
-<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+{selectedDetails.transferAccountName==null?null:(<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
 
 
-      <View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
 
 
-      <Text style={{fontSize:15}}> Account Name : </Text>
+<Text style={{fontSize:15}}> Account Name : </Text>
 
 
-       </View>
+ </View>
 
-       <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
 
 
 
-       <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transferAccountName?selectedDetails.transferAccountName:'':''} </Text>
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transferAccountName?selectedDetails.transferAccountName:'':''} </Text>
 
-       </View>
+ </View>
 
-</View>
+</View>)}
+
+
+{selectedDetails.customerName==null?null:(<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+
+<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Customer Name : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.customerName?selectedDetails.customerName:'':''} </Text>
+
+ </View>
+
+</View>)}
+
+{/* 2 */}
+
+
+{selectedDetails.customerEmail==null?null:(<View style={{height:'6%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+
+<View style={{height:'100%',width:'40%',justifyContent:'center',paddingLeft:15}}>
+
+
+<Text style={{fontSize:15}}> Account Email : </Text>
+
+
+ </View>
+
+ <View style={{height:'100%',width:'60%',justifyContent:'center',paddingRight:15}}>
+
+
+
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.customerEmail?selectedDetails.customerEmail:'':''}</Text>
+
+ </View>
+
+</View> )}
+
+
+
            
 
-<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+ {/* <View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
 
 <View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
 
@@ -421,35 +517,36 @@ const Transactions = (props: Props) => {
 
  </View>
 
-</View>
+</View>  */}
 
 {/* box */}
-<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
+{selectedDetails.customerPhone==null?null:(<View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
 
-<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+<View style={{height:'100%',width:'40%',justifyContent:'center',paddingLeft:15}}>
 
 
-<Text style={{fontSize:15}}> Account Phone number : </Text>
+<Text style={{fontSize:15}}>Phone number : </Text>
 
 
  </View>
 
- <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+ <View style={{height:'100%',width:'60%',justifyContent:'center',paddingRight:15}}>
 
 
 
- <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transferAccountNumber?selectedDetails.transferAccountNumber:'':''}</Text>
+ <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.customerPhone?selectedDetails.customerPhone:'':''}</Text>
 
  </View>
 
-</View>
+</View>)}
+
  {/* box closed */}
 
 
 {/* box */}
 <View style={{height:'4%',width:'100%',marginTop:'10%',flexDirection:'row'}}>
 
-<View style={{height:'100%',width:'50%',justifyContent:'center',paddingLeft:15}}>
+<View style={{height:'100%',width:'40%',justifyContent:'center',paddingLeft:15}}>
 
 
 <Text style={{fontSize:15}}> Amount : </Text>
@@ -457,7 +554,7 @@ const Transactions = (props: Props) => {
 
  </View>
 
- <View style={{height:'100%',width:'50%',justifyContent:'center',paddingRight:15}}>
+ <View style={{height:'100%',width:'60%',justifyContent:'center',paddingRight:15}}>
 
 
 
@@ -553,10 +650,30 @@ const Transactions = (props: Props) => {
 
 
 
- <Text style={{fontSize:15,textAlign:'right'}}>{selectedDetails?selectedDetails.transactionDate ? `${moment(selectedDetails.transactionDate).format('MMMM Do YYYY')}`:'':''}</Text>
+ <Text style={{fontSize:15,textAlign:'right'}}> {selectedDetails?selectedDetails.transactionDate ? `${moment(selectedDetails.transactionDate).format('MMMM Do YYYY')}`:'':''}</Text>
 
  </View>
+
+
+
  
+</View>
+
+
+<View style={{height:'15%',width:'100%',marginTop:'15%',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+
+
+
+
+   {selectedDetails.transactionMethod == 'AgentPayment' && selectedDetails.transferValidated ==false ? (<TouchableOpacity style={{height:50,width:'90%',backgroundColor:colors.companyDarkGreen,justifyContent:'center',alignItems:'center',borderRadius:7}} onPress={()=>ValidateTransaction(selectedDetails.id)}>
+              <Text style={{color:'white'}}>Validate</Text>
+            </TouchableOpacity>) : null}
+
+{/* 
+
+            <TouchableOpacity style={{height:50,width:'90%',backgroundColor:colors.companyDarkGreen,justifyContent:'center',alignItems:'center',borderRadius:7}} onPress={()=>ValidateTransaction(selectedDetails.id)}>
+              <Text style={{color:'white'}}>Validate</Text>
+            </TouchableOpacity> */}
 </View>
  {/* box closed */}
  </ScrollView>
