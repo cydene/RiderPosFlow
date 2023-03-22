@@ -140,8 +140,8 @@ android {
         versionName "80.0.7"
             // missingDimensionStrategy 'store', 'play'
         multiDexEnabled true
-        // ndkVersion '21.4.7075529'
-        ndkVersion '23.2.8568313'
+        ndkVersion '21.4.7075529'
+        // ndkVersion '23.2.8568313'
         
     }
     splits {

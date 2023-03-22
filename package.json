@@ -8,7 +8,8 @@
     "test": "jest",
     "postinstall": "npx jetify",
     "androidPush": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Production -t=*",
-    "androidPush2": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Staging -t=*"
+    "androidPush2": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Staging -t=*",
+    "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle  --assets-dest android/app/src/main/res/"
   },
   "dependencies": {
     "@react-native-community/async-storage": "~1.12.1",
@@ -38,7 +39,7 @@
     "react-native-gesture-handler": "~1.8.0",
     "react-native-image-crop-picker": "~0.37.2",
     "react-native-loading-spinner-overlay": "^3.0.1",
-    "react-native-maps": "~0.27.1",
+    "react-native-maps": "0.27.1",
     "react-native-maps-directions": "~1.8.0",
     "react-native-md5": "^1.0.0",
     "react-native-modal": "~11.7.0",
