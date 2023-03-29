@@ -1,5 +1,6 @@
 {
   "main": "index.js",
+  "version": "1.0.0",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -9,7 +10,11 @@
     "postinstall": "npx jetify",
     "androidPush": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Production -t=*",
     "androidPush2": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Staging -t=*",
-    "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle  --assets-dest android/app/src/main/res/"
+    "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle  --assets-dest android/app/src/main/res/",
+    "release-apk": "npm run bundle && cd android && ./gradlew assembleRelease",
+    "release-bundle": "npm run bundle && cd android && ./gradlew bundleRelease",
+    "release": "cd android && ./gradlew assembleRelease",
+    "changeVersion": "react-native-version --nerver-amend"
   },
   "dependencies": {
     "@react-native-community/async-storage": "~1.12.1",
@@ -45,6 +50,7 @@
     "react-native-modal": "~11.7.0",
     "react-native-picker-select": "~6.3.0",
     "react-native-reanimated": "~1.13.0",
+    "react-native-rename": "^3.2.12",
     "react-native-screens": "~2.15.0",
     "react-native-simple-toast": "~1.1.3",
     "react-native-swipeout": "~2.3.6",
@@ -66,6 +72,7 @@
     "@types/react-native": "~0.63.2",
     "babel-preset-expo": "~8.3.0",
     "jest-expo": "~40.0.0",
+    "react-native-version": "^4.0.0",
     "typescript": "~4.0.0"
   },
   "jest": {
