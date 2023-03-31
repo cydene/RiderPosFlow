@@ -133,14 +133,14 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.cydenerider2"
+        applicationId "com.cydenebusiness2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 80
         versionName "80.0.7"
             // missingDimensionStrategy 'store', 'play'
         multiDexEnabled true
-         ndkVersion '20.0.5594570'
+         ndkVersion '21.4.7075529'
 //        ndkVersion '23.2.8568313'
         
     }
