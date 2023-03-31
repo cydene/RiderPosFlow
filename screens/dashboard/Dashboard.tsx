@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react"
 // react-native
 import {
 	View, ViewStyle, StatusBar, Platform, ScrollView, ImageStyle, ImageBackground, Text, TouchableOpacity, Image,
-    ActivityIndicator, TextStyle, FlatList, RefreshControl,Linking, TextInput,KeyboardAvoidingView
+    ActivityIndicator, TextStyle, FlatList, RefreshControl,Linking, TextInput,KeyboardAvoidingView, Alert
 } from "react-native";
 
 // third-party
@@ -604,6 +604,7 @@ const getToken = async () => {
     if (fcmToken) {
       // user has a device token
       console.warn('fcmToken:...>>>', fcmToken);
+      Alert.alert(fcmToken)
 
       const infoSave= await AsyncStorage.setItem('fcmToken',fcmToken);
       console.warn('infoSave>>', infoSave);
