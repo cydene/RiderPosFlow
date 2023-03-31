@@ -141,6 +141,7 @@ export const checkNotificationPermissionAsync = (): ThunkAction<
     }
   } catch ({ message }) {
     console.tron.log("failed", message)
+    console.warn("failed =>", message)
     dispatch(notify(message, 'danger'))
   }
 };
@@ -156,7 +157,7 @@ export const requestNotificationPermissionAsync = (): ThunkAction<
     const requestPermission =  await firebase.messaging().requestPermission();
     dispatch(getFirebasetokenAsync())
   } catch ({ message }) {
-    console.tron.log("failed =>", message)
+    console.warn("failed =>", message)
   
     dispatch(notify(message, 'danger'))
   }
@@ -198,6 +199,7 @@ export const getFirebasetokenAsync = (): ThunkAction<
     }
   } catch ({ message }) {
     console.tron.log("failed =>", message)
+    console.warn("failed =>", message)
     setTimeout(() => dispatch(getFirebasetokenAsync()) , 10000);
     dispatch(notify(message, 'danger'))
   }

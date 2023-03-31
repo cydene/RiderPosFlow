@@ -133,15 +133,15 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.cydenerider"
+        applicationId "com.cydenebusiness2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 80
         versionName "80.0.7"
             // missingDimensionStrategy 'store', 'play'
         multiDexEnabled true
-        ndkVersion '21.4.7075529'
-        // ndkVersion '23.2.8568313'
+         ndkVersion '21.4.7075529'
+//        ndkVersion '23.2.8568313'
         
     }
     splits {
@@ -191,7 +191,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    
+
+
+
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 // implementation "com.facebook.react:react-native:0.63.5"
