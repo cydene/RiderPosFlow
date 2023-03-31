@@ -136,8 +136,8 @@ android {
         applicationId "com.cydenebusiness2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 80
-        versionName "80.0.7"
+        versionCode 1
+        versionName "1.0.0"
             // missingDimensionStrategy 'store', 'play'
         multiDexEnabled true
          ndkVersion '21.4.7075529'
@@ -159,18 +159,18 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            storeFile file('keystore.jks')
-            storePassword 'cydeneRider'
-            keyAlias 'upload'
-            keyPassword 'cydeneRider'
-        }
         // release {
-        //     storeFile file('release.jks')
-        //     storePassword 'cydene'
-        //     keyAlias 'cydene'
-        //     keyPassword 'cydene'
+        //     storeFile file('keystore.jks')
+        //     storePassword 'cydeneRider'
+        //     keyAlias 'upload'
+        //     keyPassword 'cydeneRider'
         // }
+        release {
+            storeFile file('release.keystore')
+            storePassword 'cydene'
+            keyAlias 'cydene'
+            keyPassword 'cydene'
+        }
     }
     buildTypes {
         debug {

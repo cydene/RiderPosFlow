@@ -4,8 +4,8 @@ buildscript {
     ext {
         buildToolsVersion = "29.0.2"
         minSdkVersion = 21
-        compileSdkVersion = 29
-        targetSdkVersion = 29
+        compileSdkVersion = 31
+        targetSdkVersion = 31
         googlePlayServicesAuthVersion = "16.0.1"
         androidMapsUtilsVersion = "0.5+"
         playServicesVersion = "17.0.0" // or find latest version
