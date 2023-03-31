@@ -49,6 +49,7 @@ import { Icon } from "../../components/icon";
 import { formatAmount } from "../../utils/formatters";
 import moment from "moment";
 import axios from "axios";
+import Toast from 'react-native-simple-toast';
 
 interface DispatchProps {
   notify: (message: string, type: string) => void;
@@ -157,6 +158,9 @@ const Transactions = (props: Props) => {
         }
       });
       if (res) {
+        Toast.show(`Transaction Validated successfully`, Toast.LONG);
+        setDetailsToggle(false);
+        await getTransaction();
         setIsLoading(false);
         console.warn("retrieve user info ", res.data);
       }
@@ -615,7 +619,7 @@ const Transactions = (props: Props) => {
               ) : null} */}
 
               {/* transactionMethod == "CreditWallet" || transactionMethod == "FundWallet" */}
-              {(selectedDetails.transactionMethod == "CreditWallet" || selectedDetails.transactionMethod == "FundWallet") &&
+              {(selectedDetails.transactionMethod == "CreditWallet" || selectedDetails.transactionMethod == "FundWallet") && !isLoading &&
               selectedDetails.transferValidated == false ? (
                 <TouchableOpacity
                   style={{
