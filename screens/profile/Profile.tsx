@@ -28,6 +28,8 @@ import { colors, fonts, images } from "../../theme";
 import { translate } from "../../i18n";
 import { CLOUDINARY_URL } from "@env"
 import { Header } from "../../components/header";
+import AsyncStorage from "@react-native-community/async-storage";
+import axios from 'axios';
 
 
 interface DispatchProps {
@@ -136,11 +138,14 @@ const Profile = (props: Props) => {
 	const [loading, setLoading] = useState(false)
     const isDarkMode = useDarkMode()
 
+	const [userDataDB, setuserDataDB] = useState(null)
+
 	console.tron.log(userDetails)
 
 	useEffect(() => {
         updateBackground()
 		console.warn('lllll',userDetails)
+		getUserData();
     }, [])
 
     useEffect(() => {
@@ -150,6 +155,64 @@ const Profile = (props: Props) => {
         updateBackground()
 
     }, [isDarkMode])
+
+	const getUserData = async () =>{
+		setLoading(true);
+		try {
+			  const info = await AsyncStorage.getItem("user");
+			  console.warn("userDetails", info);
+		
+			  console.warn("userDetails >>>>333token", userDetails.token);
+			  let res = await axios({
+			      method: 'GET',
+			      url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/profile`,
+		
+			      headers: {
+			      Authorization:`Bearer ${userDetails.token}`,
+			      },
+		
+			  });
+			  if (res) {
+				  console.warn('\\ success UserData>>>',res.data)
+				  setuserDataDB(res.data)
+				  setLoading(false)
+			  }
+			} catch (err) {
+			  setLoading(false);
+			  console.warn("call err>>>>>>>>>>>>>", err);
+			}
+			
+	}
+
+	const updatePhotoDb = async (url: string) =>{
+		console.log('<<<<<<<<PHOTO URL>>>>>>>', url);
+		try {
+			  setLoading(true);
+			  const info = await AsyncStorage.getItem("user");
+			  console.warn("userDetails", info);
+		
+			  console.warn("userDetails >>>>333token", userDetails.token);
+			let res = await axios({
+				method: 'PUT',
+				url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/${userDetails.id}`,
+		
+				headers: {
+				Authorization:`Bearer ${userDetails.token}`,
+				},
+				data:{
+					"photoUrl": url,
+				}
+			});
+			  if (res) {
+				  console.warn('\\ success PHOTOUPDATE>>>',res.data)
+				  await getUserData();
+				  setLoading(false)
+			  }
+			} catch (err) {
+			  setLoading(false);
+			  console.warn("call err>>>>>>>>>>>>>", err);
+			}
+	}
 
 
 
@@ -208,7 +271,7 @@ const Profile = (props: Props) => {
 		  body: data,
 		})
 		  .then(res => res.json())
-		  .then(dat => {
+		  .then(async dat => {
 			setLoading(false);
 		
 			console.warn('<<<<<<<<response done>>>>>>>', dat.secure_url);
@@ -221,6 +284,7 @@ const Profile = (props: Props) => {
 				"url": dat.secure_url
 				},
 			})
+			await updatePhotoDb(dat.secure_url);
 			setPhoto(dat.secure_url);
 		  })
 		  .catch(err => {
@@ -364,11 +428,13 @@ const Profile = (props: Props) => {
 
 					<View
 						style={{
-							flexDirection: 'row'
+							flexDirection: 'row',
+							
 						}}
 					>
 						<Image
-							source={{ uri:userPicture? `${userPicture}`:photo?photo:userDetails.photo }}
+							source={{ uri: userDataDB !== null ? userDataDB.photo : userPicture? `${userPicture}`:photo?photo:userDetails.photo
+								 }}
 							style={{
 								width: Layout.window.width / 4,
 								height: Layout.window.height / 8,
@@ -385,6 +451,8 @@ const Profile = (props: Props) => {
 							<Text
 								style={[USER_NAME, {
 									color: colors.black,
+									width: Layout.window.width * 0.5,
+
 								}]}
 							>
 								{userName}
@@ -412,7 +480,7 @@ const Profile = (props: Props) => {
 									}}
 								>
 									{translate('profile.walletBalance', {
-										walletBalance: walletBalance ? walletBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '0.00'
+										walletBalance:  userDataDB !== null ? userDataDB?.walletBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")  : walletBalance ? walletBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '0.00'
 									})}
 								</Text>
 
@@ -615,7 +683,8 @@ const Profile = (props: Props) => {
 					<Text
 						style={SETTINGS_HEADER}
 					>
-						{bankName}
+						{/* {bankName} */}
+						{userDataDB !== null ? userDataDB?.bankName : bankName}
 					</Text>
 
 					<View
@@ -636,7 +705,7 @@ const Profile = (props: Props) => {
 					<Text
 						style={SETTINGS_HEADER}
 					>
-						{accountNumber}
+						{userDataDB !== null ? userDataDB?.payoutNumber : accountNumber}
 					</Text>
 
 				</View>
