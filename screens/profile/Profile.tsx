@@ -455,7 +455,9 @@ const Profile = (props: Props) => {
 
 								}]}
 							>
-								{userName}
+								{userDataDB !== null ? 
+								userDataDB.firstName ?
+								`${userDataDB.firstName} ${userDataDB.lastName}` : userName: userName}
 							</Text>
 
 							<Text
@@ -777,7 +779,7 @@ const Profile = (props: Props) => {
 					<Text
 						style={SETTINGS_HEADER}
 					>
-						1.0.1
+						1.4.1
 					</Text>
 
 					<View

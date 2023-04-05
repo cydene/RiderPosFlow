@@ -604,7 +604,7 @@ const getToken = async () => {
     if (fcmToken) {
       // user has a device token
       console.warn('fcmToken:...>>>', fcmToken);
-      Alert.alert(fcmToken)
+      // Alert.alert(fcmToken)
 
       const infoSave= await AsyncStorage.setItem('fcmToken',fcmToken);
       console.warn('infoSave>>', infoSave);

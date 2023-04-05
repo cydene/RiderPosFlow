@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Cydene Rider"
+    "appName": "Cydene Business"
   },
   "firstIntro": {
     "headerOne": "Order for Gas and Diesel directly",
@@ -17,10 +17,10 @@
     "buttonText": "Continue"
   },
   "auth": {
-    "getStarted": "Welcome to Cydene Rider",
+    "getStarted": "Welcome to Cydene Business",
     "facebookText": "Continue with Facebook",
     "googleText": "Continue with Google",
-    "termsOne": "By signing up, you agree to Cydene Rider",
+    "termsOne": "By signing up, you agree to Cydene Business",
     "termsTwo": "Terms & Conditions and Privacy Policy."
   },
   "phone": {

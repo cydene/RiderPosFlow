@@ -49,7 +49,8 @@ import { Icon } from "../../components/icon";
 import { formatAmount } from "../../utils/formatters";
 import moment from "moment";
 import axios from "axios";
-import Toast from 'react-native-simple-toast';
+import Toast from "react-native-simple-toast";
+import tw from "twrnc";
 
 interface DispatchProps {
   notify: (message: string, type: string) => void;
@@ -79,6 +80,10 @@ const Transactions = (props: Props) => {
   const [detailsToggle, setDetailsToggle] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
+  const [ValidatedTransactions, setValidatedTransactions] = useState([]);
+  const [NotValidatedTransactions, setNotValidatedTransactions] = useState([]);
+  const [section, setsection] = useState("NotValidated");
+
   const [selectedDetails, setSelectedDetails] = useState("");
   useEffect(() => {
     updateBackground();
@@ -94,7 +99,7 @@ const Transactions = (props: Props) => {
   }, [isDarkMode]);
 
   const getTransaction = async () => {
-    console.log('called again');
+    console.log("called again");
     try {
       //   setLoading(true)
       setIsLoading(true);
@@ -114,12 +119,27 @@ const Transactions = (props: Props) => {
         method: "GET",
         url: `https://cydene-admin-prod.herokuapp.com/api/wallet/${userModify.wallet.id}/transactions`,
 
-        headers: {Authorization: `Bearer ${next}`},
+        headers: { Authorization: `Bearer ${next}` },
       });
       if (res) {
         setIsLoading(false);
         console.warn("retrieve user info ", res);
         setTransactions(res.data);
+        if (res.data) {
+          let array_Val = [];
+          let array_Not = [];
+          res.data.map((item: any, index: any) => {
+            if (item.transferValidated == true) {
+              array_Val.push(item);
+            } else {
+              array_Not.push(item);
+            }
+            // console.log('Array1', array1);
+          });
+          console.log("Array2", array_Val);
+          setValidatedTransactions(array_Val);
+          setNotValidatedTransactions(array_Not);
+        }
       }
     } catch (err) {
       setIsLoading(false);
@@ -153,9 +173,9 @@ const Transactions = (props: Props) => {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
-        data:{
-          "transactionId": comingId
-        }
+        data: {
+          transactionId: comingId,
+        },
       });
       if (res) {
         Toast.show(`Transaction Validated successfully`, Toast.LONG);
@@ -196,12 +216,11 @@ const Transactions = (props: Props) => {
 
   const renderItem = ({ item, index }: any) => {
     const { transactionRef, transactionMethod, isCredit, transactionDate, settlementAmount, amount } = item;
-    console.tron.log(item, "GOT HERE");
+    console.tron.log("GOT HERE", item);
 
     return (
-      <TouchableOpacity onPress={() => detailsManipulation(item)}>
+      <TouchableOpacity key={index} onPress={() => detailsManipulation(item)}>
         <View
-          key={index}
           style={{
             marginTop: 10,
             width: "100%",
@@ -275,22 +294,16 @@ const Transactions = (props: Props) => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        ROOT,
-        {
-          backgroundColor: isDarkMode ? colors.companyDarkGreen : colors.white,
-        },
-      ]}
-      refreshControl={
-        <RefreshControl
-          refreshing={isLoading}
-          onRefresh={() => {
-            getTransaction();
-          }}
-        />
-      }
-    >
+    // <ScrollView
+    //   contentContainerStyle={[
+    //     ROOT,
+    //     {
+    //       backgroundColor: isDarkMode ? colors.companyDarkGreen : colors.white,
+    //     },
+    //   ]}
+    //   scrollEnabled={false}
+    // >
+    <View style={{ flex: 1 }}>
       <Header
         leftIcon="arrowBackWhite"
         navigation={navigation}
@@ -318,27 +331,102 @@ const Transactions = (props: Props) => {
           <ActivityIndicator size={"large"} color={isDarkMode ? colors.white : colors.companyDarkGreen} />
         </View>
       )}
-
-      {!isLoading && (
-        <View
-          style={{
-            marginTop: 20,
-            paddingHorizontal: 20,
-          }}
-        >
-          {/* {console.warn('iiii',transactions)} */}
-          {transactions !== undefined && transactions.length > 0 && (
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={transactions}
-              renderItem={renderItem}
-              contentContainerStyle={{
-                paddingBottom: "70%",
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={() => {
+              getTransaction();
+            }}
+          />
+        }
+      >
+        {!isLoading && (
+          <>
+            <View style={tw`flex flex-row px-[5%] mt-4`}>
+              <TouchableOpacity
+                style={tw`w-1/2 py-2 items-center ${
+                  section === "NotValidated" ? `border-b-2  border-[${colors.profileBlue}]` : ""
+                }`}
+                onPress={() => {
+                  setsection("NotValidated");
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "800",
+                    fontFamily: fonts.robotoBold,
+                    color: isDarkMode ? colors.white : colors.companyDarkGreen,
+                  }}
+                >
+                  Pending Validation ({NotValidatedTransactions.length})
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={tw`w-1/2 py-2 items-center ${section === "Validated" ? `border-b-2  border-[${colors.profileBlue}]` : ""}`}
+                onPress={() => {
+                  setsection("Validated");
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "800",
+                    fontFamily: fonts.robotoBold,
+                    color: isDarkMode ? colors.white : colors.companyDarkGreen,
+                  }}
+                >
+                  Validated ({ValidatedTransactions.length})
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                marginTop: 20,
+                paddingHorizontal: 20,
               }}
-            />
-          )}
-        </View>
-      )}
+            >
+              {/* {console.warn('iiii',transactions)} */}
+
+              {section === "NotValidated" && (
+                <>
+                  {transactions !== undefined && transactions.length > 0 && NotValidatedTransactions.length > 0 && (
+                    <FlatList
+                      scrollEnabled={false}
+                      showsVerticalScrollIndicator={false}
+                      data={NotValidatedTransactions}
+                      renderItem={renderItem}
+                      contentContainerStyle={{
+                        paddingBottom: "20%",
+                      }}
+                    />
+                  )}
+                </>
+              )}
+              {/* Not Validated */}
+
+              {/* Validated */}
+
+              {section === "Validated" && (
+                <>
+                  {transactions !== undefined && transactions.length > 0 && ValidatedTransactions.length > 0 && (
+                    <FlatList
+                      scrollEnabled={false}
+                      showsVerticalScrollIndicator={false}
+                      data={ValidatedTransactions}
+                      renderItem={renderItem}
+                      contentContainerStyle={{
+                        paddingBottom: "70%",
+                      }}
+                    />
+                  )}
+                </>
+              )}
+            </View>
+          </>
+        )}
+      </ScrollView>
 
       {transactions === undefined ||
         (transactions.length < 1 && !isLoading && (
@@ -619,7 +707,8 @@ const Transactions = (props: Props) => {
               ) : null} */}
 
               {/* transactionMethod == "CreditWallet" || transactionMethod == "FundWallet" */}
-              {(selectedDetails.transactionMethod == "CreditWallet" || selectedDetails.transactionMethod == "FundWallet") && !isLoading &&
+              {(selectedDetails.transactionMethod == "CreditWallet" || selectedDetails.transactionMethod == "FundWallet") &&
+              !isLoading &&
               selectedDetails.transferValidated == false ? (
                 <TouchableOpacity
                   style={{
@@ -658,7 +747,8 @@ const Transactions = (props: Props) => {
 
         {/* finish */}
       </Modal>
-    </ScrollView>
+    </View>
+    // </ScrollView>
   );
 };
 

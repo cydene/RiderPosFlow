@@ -4,8 +4,8 @@ buildscript {
     ext {
         buildToolsVersion = "29.0.2"
         minSdkVersion = 21
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        compileSdkVersion = 30
+        targetSdkVersion = 29
         googlePlayServicesAuthVersion = "16.0.1"
         androidMapsUtilsVersion = "0.5+"
         playServicesVersion = "17.0.0" // or find latest version
@@ -21,7 +21,7 @@ buildscript {
       classpath("com.android.tools.build:gradle:3.6.3")
         // classpath 'com.google.gms:google-services:3.2.1'
 
-classpath 'com.google.gms:google-services:4.0.1'
+classpath 'com.google.gms:google-services:4.3.14'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle fi09les

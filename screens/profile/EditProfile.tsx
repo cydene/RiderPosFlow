@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 
 // react-native
-import { View, ViewStyle, StatusBar, TextStyle, Text, Keyboard, Platform } from "react-native";
+import { View, ViewStyle, StatusBar, TextStyle, Text, Keyboard, Platform, ActivityIndicator, TouchableOpacity } from "react-native";
 
 // third-party
 import { NavigationScreenProps } from "react-navigation";
@@ -29,7 +29,8 @@ import { color } from "react-native-reanimated";
 import { translate } from "../../i18n";
 import { ScrollView } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-community/async-storage";
-import axios from 'axios';
+import axios from "axios";
+import Toast from "react-native-simple-toast";
 
 interface DispatchProps {
   updateUserProfileAsync: (values: authCredentials) => void;
@@ -139,8 +140,11 @@ const EditProfile = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [accountNumber, setAccountNumber] = useState("");
   const [bankName, setBankName] = useState("");
-  const [bankCode, setbankCode] = useState('');
+  const [bankCode, setbankCode] = useState("");
   var bankNameInput = useRef(null);
+
+  const [userDataBB, setuserDataBB] = useState(null);
+  const [laoding, setlaoding] = useState(false);
 
   console.log(oldBankName, "HHEH");
 
@@ -180,35 +184,33 @@ const EditProfile = (props: Props) => {
     }
   };
 
-  const getUser = async () =>{
-
-
+  const getUser = async () => {
     try {
-          let res = await axios({
-              method: 'GET',
-              url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/profile`,
+      let res = await axios({
+        method: "GET",
+        url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/profile`,
 
-              headers: {
-              Authorization:`Bearer ${userDetails.token}`,
-              },
-          });
-          if (res) {
-            console.warn('\\ USERDATA EDITPOROFILE success>>>',res.data)
-            setLoading(false)
-            setAccountNumber(res.data.payoutNumber);
-            setBankName(res.data.bankName);
-        }
-
-      } catch (err) {
+        headers: {
+          Authorization: `Bearer ${userDetails.token}`,
+        },
+      });
+      if (res) {
+        console.warn("\\ USERDATA EDITPOROFILE success>>>", res.data);
+        setuserDataBB(res.data);
         setLoading(false);
-        console.warn("call err>>>>>>>>>>>>>", err);
+        setAccountNumber(res.data.payoutNumber);
+        setBankName(res.data.bankName);
       }
-
-  }
+    } catch (err) {
+      setLoading(false);
+      console.warn("call err>>>>>>>>>>>>>", err);
+    }
+  };
 
   const saveUser = async () => {
-    console.log('saveUser started');
-    
+    console.log("saveUser started");
+    setlaoding(true);
+
     // updateUserProfileAsync({
     //   firstName: newFirstName || userDetails.firstName,
     //   lastName: newLastName || userDetails.lastName,
@@ -224,42 +226,47 @@ const EditProfile = (props: Props) => {
     //   bankCode: await manipulate(bankName || oldBankName),
     // });
 
-    
     try {
-    //   setLoading(true);
+      //   setLoading(true);
       const info = await AsyncStorage.getItem("user");
       console.warn("userDetails_here", info);
 
       console.warn("userDetails >>>>333token", userDetails.token);
-    //   let res = await axios({
-    //       method: 'GET',
-    //       url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/profile`,
+      //   let res = await axios({
+      //       method: 'GET',
+      //       url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/profile`,
 
-    //       headers: {
-    //       Authorization:`Bearer ${userDetails.token}`,
-    //       },
+      //       headers: {
+      //       Authorization:`Bearer ${userDetails.token}`,
+      //       },
 
-    //   });
-    let res = await axios({
-        method: 'PUT',
+      //   });
+      let res = await axios({
+        method: "PUT",
         url: `https://cydene-admin-prod.herokuapp.com/api/dispatchers/${userDetails.id}`,
 
         headers: {
-        Authorization:`Bearer ${userDetails.token}`,
+          Authorization: `Bearer ${userDetails.token}`,
         },
-        data:{
-            "bankName": bankName,
-            "bankCode": bankCode,
-            "payoutNumber": accountNumber,
-        }
-
-    });
+        data: {
+          firstName: newFirstName || firstName,
+          lastName: newLastName || lastName,
+          phone: newPhone || phone,
+          bankName: bankName,
+          bankCode: bankCode,
+          payoutNumber: accountNumber,
+        },
+      });
       if (res) {
-          console.warn('\\ success>>>',res.data)
-          setLoading(false)
+        console.warn("\\ success>>>", res.data);
+        Toast.show(`Profile Editted successfully`, Toast.LONG);
+        navigation.navigate("profile");
+        setLoading(false);
+        setlaoding(false);
       }
     } catch (err) {
       setLoading(false);
+      setlaoding(false);
       console.warn("call err>>>>>>>>>>>>>", err);
     }
 
@@ -832,7 +839,7 @@ const EditProfile = (props: Props) => {
               onChangeText={(fName) => setNewFirst(fName)}
               autoCapitalize="words"
               returnKeyType="next"
-              placeholder={firstName}
+              placeholder={userDataBB !== null ? userDataBB.firstName : firstName}
               placeholderTextColor={colors.dotColor}
               onSubmitEditing={() => lastNameInput.current.focus()}
               forwardedRef={firstNameInput}
@@ -862,7 +869,7 @@ const EditProfile = (props: Props) => {
               onChangeText={(phone) => setNewPhone(phone)}
               autoCapitalize="words"
               returnKeyType="next"
-              placeholder={phone}
+              placeholder={userDataBB !== null ? userDataBB.phone : phone}
               placeholderTextColor={colors.dotColor}
               onSubmitEditing={() => Keyboard.dismiss()}
               forwardedRef={phoneInput}
@@ -891,14 +898,14 @@ const EditProfile = (props: Props) => {
               onValueChange={(value) => {
                 console.tron.log(value);
                 setBankName(value);
-                banks.filter((x) =>{
+                banks.filter((x) => {
                   if (x.value === value) {
-                    console.log('item', x);
-                    setbankCode(x.code)
+                    console.log("item", x);
+                    setbankCode(x.code);
                   }
-                })
+                });
                 // console.log(banks.fil);
-                
+
                 // setGasQuantity(1)
               }}
               value={bankName}
@@ -930,15 +937,31 @@ const EditProfile = (props: Props) => {
               margin: 20,
             }}
           >
-            <Button
-              style={[EDIT_BUTTON, { backgroundColor: colors.companyDarkGreen }]}
+            {/* <Button
+              style={[EDIT_BUTTON, { backgroundColor: colors.companyBlue }]}
               textStyle={[EDIT_BUTTON_TEXT, { color: colors.white }]}
-              onPress={() => saveUser()}
-              tx={`profile.save`}
+              onPress={() =>saveUser()}
+              tx={ loading ? `profile.save`}
               disabled={loading || isLoading}
               loading={loading || isLoading}
               loadingTextX={"profile.saving"}
-            />
+            /> */}
+            <TouchableOpacity
+              style={{
+                height: 50,
+                width: "95%",
+                backgroundColor: colors.companyBlue,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 7,
+              }}
+              onPress={() => saveUser()}
+            >
+              {laoding && (
+                    <ActivityIndicator size={"large"} color={colors.white} />
+              )}
+              {!laoding && <Text style={{ color: "white" }}>Save</Text>}
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
