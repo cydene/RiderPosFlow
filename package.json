@@ -12,6 +12,7 @@
     "androidPush2": "appcenter codepush release-react -a express-cydene.com/cydeneRider_android -d Staging -t=*",
     "bundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle  --assets-dest android/app/src/main/res/",
     "release-apk": "npm run bundle && cd android && ./gradlew assembleRelease",
+    "release-apk2": "npm run bundle && cd android && ./gradlew app:assembleRelease",
     "release-bundle": "npm run bundle && cd android && ./gradlew bundleRelease",
     "release": "cd android && ./gradlew assembleRelease",
     "changeVersion": "react-native-version --nerver-amend"
